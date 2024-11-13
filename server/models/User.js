@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema(
       minLength: 5,
       maxLength: 30,
     },
+    password: {
+      type: String,
+      required: true,
+      minLength: 6,
+    },
     mobile: {
       type: Number,
       required: true,
@@ -20,7 +25,7 @@ const userSchema = new mongoose.Schema(
       minLength: 10,
       maxLength: 15,
     },
-    profiePic: {
+    profilePic: {
       type: String,
       default:
         "https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg",
