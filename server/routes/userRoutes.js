@@ -9,4 +9,6 @@ router.get("/profile");
 router.put("/profile-update");
 router.delete("/remove-account");
 
-module.exports = router;
+const userRouter = router;
+
+module.exports = userRouter;

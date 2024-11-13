@@ -8,4 +8,6 @@ router.put("/:restaurantId"); //update restaurtant
 router.post("/create"); // create restaurant
 router.delete("/:restaurantId"); // delete restaurant
 
-module.exports = router;
+const restaurantRouter = router;
+
+module.exports = restaurantRouter;
