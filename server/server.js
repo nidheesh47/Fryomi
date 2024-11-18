@@ -3,12 +3,17 @@ const app = express();
 
 const config = require("./config/db");
 const apiRouter = require("./routes");
+const cookieParser = require("cookie-parser");
 
 const PORT = config.PORT;
 
 const connectDB = config.connectDB;
 
 connectDB();
+
+app.use(cookieParser());
+
+cookieParser();
 
 app.use(express.json());
 

@@ -66,11 +66,67 @@ const userLogin = async (req, res, next) => {
   }
 };
 
+const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+
+    // Validate input fields
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+
+    // Fetch the authenticated user (assuming userId is available in req.user)
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Verify current password
+    const isPassMatch = bcrypt.compareSync(currentPassword, user.password);
+    if (!isPassMatch) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    // Hash the new password
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+
+    // Update the user's password
+    user.password = hashedPassword;
+    await user.save();
+
+    // Respond to the client
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (error) {
+    res
+      .status(error.statusCode || 500)
+      .json({ message: error.message || "Internal server error" });
+  }
+};
+
 const userProfile = async (req, res, next) => {
   try {
-    const userId = "";
-    const userProfile = await user.findById(userId);
-    res.status(200).json({ message: "User login successfully" });
+    const userId = req.user.id;
+    const userProfile = await User.findById(userId);
+    res
+      .status(200)
+      .json({ message: "User login successfully", data: userProfile });
+  } catch (error) {
+    res
+      .status(error.statusCode || 500)
+      .json({ message: error.message || "Internal server error" });
+  }
+};
+
+const userLogout = async (req, res, next) => {
+  try {
+    res.clearCookie("token");
+    res.status(201).json({ message: "user logout" });
   } catch (error) {
     res
       .status(error.statusCode || 500)
@@ -93,4 +149,11 @@ const checkUser = async (req, res, next) => {
       .json({ message: error.message || "Internal server error" });
   }
 };
-module.exports = { userSignup, userLogin, checkUser };
+module.exports = {
+  userSignup,
+  userLogin,
+  checkUser,
+  changePassword,
+  userProfile,
+  userLogout,
+};
