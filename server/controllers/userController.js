@@ -112,7 +112,7 @@ const changePassword = async (req, res, next) => {
 const userProfile = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const userProfile = await User.findById(userId);
+    const userProfile = await User.findById(userId).select("-password");
     res
       .status(200)
       .json({ message: "User login successfully", data: userProfile });
