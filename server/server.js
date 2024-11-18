@@ -1,15 +1,14 @@
 const express = require("express");
 const app = express();
 
-const config = require("./config/db");
 const apiRouter = require("./routes");
 const cookieParser = require("cookie-parser");
+const { PORT, connectDB } = require("./config/db");
 
-const PORT = config.PORT;
+const port = PORT;
+const db = connectDB;
 
-const connectDB = config.connectDB;
-
-connectDB();
+db();
 
 app.use(cookieParser());
 
@@ -23,7 +22,7 @@ app.get("/", (req, res) => {
 
 app.use("/api", apiRouter);
 
-app.listen(PORT, () => {
+app.listen(port, () => {
   console.log(`server is running on port ${PORT}`);
 });
 
