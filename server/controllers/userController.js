@@ -124,6 +124,34 @@ const userProfile = async (req, res, next) => {
   }
 };
 
+const userUpdateprofile = async (req, res, next) => {
+  try {
+    const { name, email, mobile, profilePic } = req.body;
+    const userId = req.user.id;
+    if (!name && !email && !mobile && !profilePic) {
+      return res
+        .status(400)
+        .json({ message: "At least one field must be provided to update" });
+    }
+    const updateProfile = await User.findByIdAndUpdate(userId, {
+      name,
+      email,
+      mobile,
+      profilePic,
+    }).select("-password");
+    if (!updateProfile) {
+      return res.status(404).json({ message: "User is not found" });
+    }
+    res.status(200).json({
+      message: "User profile updated successfully",
+      updateProfile,
+    });
+  } catch (error) {
+    console.error("error updating profile", error);
+    res.status(500).json({ message: "Internal server  error" });
+  }
+};
+
 const userLogout = async (req, res, next) => {
   try {
     res.clearCookie("token");
@@ -139,7 +167,6 @@ const checkUser = async (req, res, next) => {
   try {
     const { userEmail } = req.query;
     const userExist = await User.findOne({ email: userEmail });
-    console.log("userexist====", userExist);
     if (!userExist) {
       return res.status(400).json({ message: "User does not exist" });
     }
@@ -156,5 +183,6 @@ module.exports = {
   checkUser,
   changePassword,
   userProfile,
+  userUpdateprofile,
   userLogout,
 };
