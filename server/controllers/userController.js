@@ -1,10 +1,10 @@
-const User = require("../models/User");
+const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/token");
 const { findById } = require("../models/menuItem");
 const userSignup = async (req, res, next) => {
   try {
-    const { name, email, password, mobile, profilePic } = req.body;
+    const { name, email, password, mobile, profilePic, role } = req.body;
     if (!name || !email || !password || !mobile) {
       return res.status(400).json({ message: "All fields required" });
     }
@@ -12,7 +12,7 @@ const userSignup = async (req, res, next) => {
     if (userExist) {
       return res.status(400).json({ message: "User all ready existed" });
     }
-
+    console.log(role);
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     const newUser = new User({
@@ -21,8 +21,9 @@ const userSignup = async (req, res, next) => {
       mobile,
       password: hashedPassword,
       profilePic,
+      role: role ? role : "user",
     });
-    console.log("api hit");
+
     await newUser.save();
 
     const token = generateToken(newUser, "user");
