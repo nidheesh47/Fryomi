@@ -1,4 +1,4 @@
-const MenuItems = require("../models/menuItem"); // Corrected model import
+const MenuItem = require("../models/menuItem"); // Corrected model import
 
 const createMenuItem = async (req, res, next) => {
   try {
@@ -9,7 +9,7 @@ const createMenuItem = async (req, res, next) => {
     }
 
     // Corrected to create a new MenuItem
-    const newMenuItem = new MenuItems({
+    const newMenuItem = new MenuItem({
       title,
       image,
       price,
@@ -37,12 +37,89 @@ const updateMenuItem = async (req, res, next) => {
     if (!id) {
       return res.status(400).json({ message: "id is required" });
     }
-    const updateMenuItem = await MenuItems.findByIdAndUpdate(id, {
+    const updateItem = await MenuItem.findByIdAndUpdate(id, {
       title,
       image,
       price,
     });
-  } catch (error) {}
+    if (!updateItem) {
+      return res.status(404).json({ message: "Menu item not found" });
+    }
+    res.status(200).json({
+      message: "Menu item updated successfully",
+      updateItem,
+    });
+  } catch (error) {
+    console.error("Error updating menu item:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
-module.exports = { createMenuItem };
+const deleteMenuItem = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Id is required" });
+    }
+    const deleteMenuItemById = await MenuItem.findByIdAndDelete(id);
+    if (!deleteMenuItemById) {
+      return res.status(404).json({ message: "menu item is not found " });
+    }
+    res
+      .status(200)
+      .json({ message: "Menu item delete successfully", deleteMenuItemById });
+  } catch (error) {
+    {
+      console.error("Error deleting menu item:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+};
+
+const getAllMenuItems = async (req, res, next) => {
+  try {
+    const menuItems = await MenuItem.find();
+    if (!menuItems || menuItems.length === 0) {
+      return res.status(404).json({ message: "No menu items found" });
+    }
+    res.status(200).json({
+      message: "Menu items fetch successfully",
+      menuItems,
+    });
+  } catch (error) {
+    console.error("error fetching menu items", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+const getMenuItem = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Id is required" });
+    }
+    const getMenuItemById = await MenuItem.findById(id);
+    if (!getMenuItemById) {
+      return res.status(404).json({ message: "No menu item found" });
+    }
+    res.status(200).json({
+      message: "Menu item fetch successfully",
+      getMenuItemById,
+    });
+  } catch (error) {
+    console.error("error fetching menu item", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = {
+  createMenuItem,
+  updateMenuItem,
+  deleteMenuItem,
+  getAllMenuItems,
+  getMenuItem,
+};
