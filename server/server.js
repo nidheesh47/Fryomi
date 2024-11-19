@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 app.use("/api", apiRouter);
 
 app.listen(port, () => {
-  console.log(`server is running on port ${PORT}`);
+  console.log(`server is running on port ${port}`);
 });
 
 app.all("*", (req, res) => {

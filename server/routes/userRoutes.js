@@ -18,8 +18,8 @@ router.post("/login", userLogin);
 router.put("/change-password", userAuth, changePassword);
 router.post("/logout", userAuth, userLogout);
 router.get("/profile", userAuth, userProfile);
-router.put("/profile-update");
-router.delete("/remove-account");
+router.put("/profile-update", userAuth);
+router.delete("/remove-account", userAuth);
 
 const userRouter = router;
 
