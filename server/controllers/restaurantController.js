@@ -11,7 +11,10 @@ const createRestaurant = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({ message: "Unauthorized user" });
     }
-
+    const restauarntExist = await Restaurant.findOne({ name: name });
+    if (restauarntExist) {
+      return res.status(400).json({ message: "Restaurant all ready existed" });
+    }
     const newRestaurant = new Restaurant({
       name,
       location,
