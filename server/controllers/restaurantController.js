@@ -59,4 +59,61 @@ const updateRestaurant = async (req, res, next) => {
   }
 };
 
-module.exports = { createRestaurant, updateRestaurant };
+const getAllRestaurants = async (req, res, next) => {
+  try {
+    const allRestaurants = await Restaurant.find();
+    if (!allRestaurants || allRestaurants.length === 0) {
+      return res.status(404).json({ message: "No restaurant found" });
+    }
+    res
+      .status(200)
+      .json({ message: "Fetching restaurants successfully", allRestaurants });
+  } catch (error) {
+    console.error("error fetching restaurants", error);
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
+const getRestaurant = async (req, res, next) => {
+  try {
+    const { restaurantId } = req.params;
+    if (!restaurantId) {
+      return res.status(400).json({ message: "restaurant id is required" });
+    }
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+      return res.status(404).json({ message: "restaurant is not found" });
+    }
+    res
+      .status(200)
+      .json({ message: "fetching restaurant successfully", restaurant });
+  } catch (error) {
+    console.error("error fetching restaurant", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const deleteRestaurant = async (req, res, next) => {
+  try {
+    const { restaurantId } = req.params;
+    if (!restaurantId) {
+      return res.status(400).json({ message: "restaurant id is required" });
+    }
+    const restaurant = await Restaurant.findByIdAndDelete(restaurantId);
+    if (!restaurant) {
+      return res.status(404).json({ message: "restaurant is not found" });
+    }
+    res.status(200).json({ message: "Delete restaurant successfully" });
+  } catch (error) {
+    console.error("error deleting restaurant", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = {
+  createRestaurant,
+  updateRestaurant,
+  getAllRestaurants,
+  getRestaurant,
+  deleteRestaurant,
+};
