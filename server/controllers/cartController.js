@@ -1,25 +1,21 @@
 const Cart = require("../models/cart");
 const MenuItem = require("../models/menuItem");
-
+const Restauarnt = require("../models/restaurant");
+const User = require();
 const addToCart = async (req, res, next) => {
   try {
-    const { foodId, quantity } = req.body;
+    const { foodId, quantity, restauarnt } = req.body;
     const userId = req.user.id;
-    if (!foodId || quantity) {
+    const user = await user.findById(userId);
+
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized user" });
+    }
+    if (!foodId || !quantity || !restauarnt) {
       return res
         .status(400)
-        .json({ message: "foodid and quantity is requires" });
+        .json({ message: "foodid , quantity and restaurant is requires" });
     }
-    const foodItem = await MenuItem.findById(foodId);
-    if (!foodItem) {
-      return res.status(404).json({ message: "Food item is not found" });
-    }
-    let cart = await Cart.findOne({ userId });
-    if (!cart) {
-      cart = new Cart({ userId, items: [], totalPrice: 0, finalPrice: 0 });
-    }
-    const existingItemIndex = cart.items.findIndex(
-      (item) => item.foodId.toString() === foodId
-    );
+    const foodItem = await MenuItem.findById(foodId, {});
   } catch (error) {}
 };

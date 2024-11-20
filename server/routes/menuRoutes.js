@@ -11,7 +11,7 @@ const auth = require("../middleware/auth");
 const router = express.Router();
 
 router.post("/item", auth, createMenuItem);
-router.get("/all-items", auth, getAllMenuItems);
+router.get("/items", auth, getAllMenuItems);
 router.put("/:itemId", auth, updateMenuItem);
 router.get("/:itemId", auth, getMenuItem);
 router.delete("/:itemId", auth, deleteMenuItem);

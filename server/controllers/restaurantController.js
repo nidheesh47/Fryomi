@@ -83,7 +83,7 @@ const getRestaurant = async (req, res, next) => {
     if (!restaurantId) {
       return res.status(400).json({ message: "restaurant id is required" });
     }
-    const restaurant = await Restaurant.findById(restaurantId);
+    const restaurant = await Restaurant.findById(restaurantId).populate("menu");
     if (!restaurant) {
       return res.status(404).json({ message: "restaurant is not found" });
     }

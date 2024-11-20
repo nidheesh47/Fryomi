@@ -33,7 +33,6 @@ const createMenuItem = async (req, res, next) => {
 const updateMenuItem = async (req, res, next) => {
   try {
     const { itemId } = req.params;
-    console.log(itemId);
     const { title, image, price, description } = req.body;
     if (!itemId) {
       return res.status(400).json({ message: "itemId is required" });
