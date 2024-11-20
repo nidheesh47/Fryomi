@@ -163,6 +163,19 @@ const userLogout = async (req, res, next) => {
   }
 };
 
+const deleteUser = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const removeUser = await User.findByIdAndDelete(userId);
+    res.status(200).json({ message: "User delete successfully" });
+  } catch (error) {
+    console.error("error deleting user", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
 const checkUser = async (req, res, next) => {
   try {
     const { userEmail } = req.query;
@@ -185,4 +198,5 @@ module.exports = {
   userProfile,
   userUpdateprofile,
   userLogout,
+  deleteUser,
 };

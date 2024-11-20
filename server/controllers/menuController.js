@@ -32,15 +32,17 @@ const createMenuItem = async (req, res, next) => {
 
 const updateMenuItem = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { itemId } = req.params;
+    console.log(itemId);
     const { title, image, price, description } = req.body;
-    if (!id) {
-      return res.status(400).json({ message: "id is required" });
+    if (!itemId) {
+      return res.status(400).json({ message: "itemId is required" });
     }
-    const updateItem = await MenuItem.findByIdAndUpdate(id, {
+    const updateItem = await MenuItem.findByIdAndUpdate(itemId, {
       title,
       image,
       price,
+      description,
     });
     if (!updateItem) {
       return res.status(404).json({ message: "Menu item not found" });
@@ -57,17 +59,15 @@ const updateMenuItem = async (req, res, next) => {
 
 const deleteMenuItem = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    if (!id) {
-      return res.status(400).json({ message: "Id is required" });
+    const { itemId } = req.params;
+    if (!itemId) {
+      return res.status(400).json({ message: "Item id is required" });
     }
-    const deleteMenuItemById = await MenuItem.findByIdAndDelete(id);
+    const deleteMenuItemById = await MenuItem.findByIdAndDelete(itemId);
     if (!deleteMenuItemById) {
       return res.status(404).json({ message: "menu item is not found " });
     }
-    res
-      .status(200)
-      .json({ message: "Menu item delete successfully", deleteMenuItemById });
+    res.status(200).json({ message: "Menu item delete successfully" });
   } catch (error) {
     {
       console.error("Error deleting menu item:", error);
@@ -96,11 +96,11 @@ const getAllMenuItems = async (req, res, next) => {
 
 const getMenuItem = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    if (!id) {
-      return res.status(400).json({ message: "Id is required" });
+    const { itemId } = req.params;
+    if (!itemId) {
+      return res.status(400).json({ message: "Item Id is required" });
     }
-    const getMenuItemById = await MenuItem.findById(id);
+    const getMenuItemById = await MenuItem.findById(itemId);
     if (!getMenuItemById) {
       return res.status(404).json({ message: "No menu item found" });
     }
