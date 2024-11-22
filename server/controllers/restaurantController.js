@@ -7,8 +7,8 @@ const createRestaurant = async (req, res, next) => {
     const { name, location, phone, cuisine } = req.body;
     const userId = req.user.id;
     const user = await User.findById(userId);
-
-    if (!user) {
+    const role = req.user.role;
+    if (!user || role !== "admin") {
       return res.status(401).json({ message: "Unauthorized user" });
     }
     const restauarntExist = await Restaurant.findOne({ name: name });
@@ -39,8 +39,8 @@ const updateRestaurant = async (req, res, next) => {
     const { name, location, phone, cuisine, menu } = req.body;
     const userId = req.user.id;
     const user = await User.findById(userId);
-
-    if (!user) {
+    const role = req.user.role;
+    if (!user || role !== "admin") {
       return res.status(401).json({ message: "Unauthorized user" });
     }
     const update = await Restaurant.findByIdAndUpdate(restaurantId, {
@@ -99,6 +99,12 @@ const getRestaurant = async (req, res, next) => {
 const deleteRestaurant = async (req, res, next) => {
   try {
     const { restaurantId } = req.params;
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    const role = req.user.role;
+    if (!user || role !== "admin") {
+      return res.status(401).json({ message: "Unauthorized user" });
+    }
     if (!restaurantId) {
       return res.status(400).json({ message: "restaurant id is required" });
     }

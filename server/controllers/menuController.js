@@ -1,19 +1,28 @@
 const MenuItem = require("../models/menuItem"); // Corrected model import
+const Restaurant = require("../models/restaurant");
+const { populate } = require("../models/user");
 
 const createMenuItem = async (req, res, next) => {
   try {
-    const { title, image, price, description } = req.body;
-
+    const { restaurantId } = req.params;
+    const { title, image, price, description, restaurant } = req.body;
     if (!title || !price) {
       return res.status(400).json({ message: "Title and price are required" });
     }
+    const menuItemIsExist = await MenuItem.findOne({
+      restaurant: restaurantId,
+      title: title,
+    });
+    if (menuItemIsExist) {
+      return res.status(400).json({ message: "Menu item is alread exist" });
+    }
 
-    // Corrected to create a new MenuItem
     const newMenuItem = new MenuItem({
       title,
       image,
       price,
       description,
+      restaurant: restaurantId,
     });
 
     // Save the MenuItem to the database
@@ -77,7 +86,8 @@ const deleteMenuItem = async (req, res, next) => {
 
 const getAllMenuItems = async (req, res, next) => {
   try {
-    const menuItems = await MenuItem.find();
+    const { restaurantId } = req.params;
+    const menuItems = await MenuItem.find({ restaurant: restaurantId });
     if (!menuItems || menuItems.length === 0) {
       return res.status(404).json({ message: "No menu items found" });
     }
@@ -99,7 +109,9 @@ const getMenuItem = async (req, res, next) => {
     if (!itemId) {
       return res.status(400).json({ message: "Item Id is required" });
     }
-    const getMenuItemById = await MenuItem.findById(itemId);
+    const getMenuItemById = await MenuItem.findById(itemId).populate(
+      "restaurant"
+    );
     if (!getMenuItemById) {
       return res.status(404).json({ message: "No menu item found" });
     }

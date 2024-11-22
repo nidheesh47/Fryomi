@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Restaurant = require("./restaurant");
 const menuItemSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -14,6 +15,9 @@ const menuItemSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+  restaurant: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Restaurant", required: true },
+  ],
 });
 
 const MenuItems = mongoose.model("MenuItems", menuItemSchema);

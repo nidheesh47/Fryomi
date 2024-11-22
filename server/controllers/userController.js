@@ -26,7 +26,7 @@ const userSignup = async (req, res, next) => {
 
     await newUser.save();
 
-    const token = generateToken(newUser, "user");
+    const token = generateToken(newUser);
 
     res.cookie("token", token);
 
@@ -55,7 +55,7 @@ const userLogin = async (req, res, next) => {
       return res.status(400).json({ message: "user is not authenticated" });
     }
 
-    const token = generateToken(userExist, "user");
+    const token = generateToken(userExist);
 
     res.cookie("token", token);
 

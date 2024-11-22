@@ -19,9 +19,9 @@ router.get("/check-user", checkUser);
 router.post("/login", userLogin);
 router.put("/change-password", userAuth, changePassword);
 router.post("/logout", userAuth, userLogout);
-router.get("/profile/:id", userAuth, userProfile);
-router.put("/profile/:id", userAuth, userUpdateprofile);
-router.delete("/:id", userAuth, deleteUser);
+router.get("/profile/:userId", userAuth, userProfile);
+router.put("/profile/:userId", userAuth, userUpdateprofile);
+router.delete("/:userId", userAuth, deleteUser);
 
 const userRouter = router;
 
