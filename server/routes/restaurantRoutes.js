@@ -10,7 +10,7 @@ const Auth = require("../middleware/auth");
 
 const router = express.Router();
 
-router.get("/restaurants", Auth, getAllRestaurants); // list all restaurant
+router.get("/all", Auth, getAllRestaurants); // list all restaurant
 router.get("/:restaurantId", Auth, getRestaurant); // get one restaurant
 router.put("/:restaurantId", Auth, updateRestaurant); //update restaurtant
 router.post("/create", Auth, createRestaurant); // create restaurant

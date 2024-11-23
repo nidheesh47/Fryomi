@@ -8,7 +8,7 @@ const router = express.Router();
 router.use("/user", userRouter);
 router.use("/restaurant", restaurantRouter);
 router.use("/cart", cartRouter);
-router.use("/menu", menuRouter);
+router.use("/menu-item", menuRouter);
 const apiRouter = router;
 
 module.exports = apiRouter;
