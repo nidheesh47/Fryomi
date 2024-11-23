@@ -3,16 +3,23 @@ const restaurantSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    trim: true,
   },
   location: {
     type: String,
     required: true,
+    trim: true,
   },
   phone: {
     type: String,
     required: true,
     minLength: 10,
     maxLength: 15,
+  },
+  image: {
+    type: String,
+    default:
+      "https://cdn1.iconfinder.com/data/icons/hotel-restaurant/512/16-512.png",
   },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   menu: [

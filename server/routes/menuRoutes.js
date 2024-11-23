@@ -7,13 +7,20 @@ const {
   getMenuItem,
 } = require("../controllers/menuController");
 const auth = require("../middleware/auth");
+const upload = require("../middleware/multer");
 
 const router = express.Router();
 
-router.post("/:restaurantId/create", auth, createMenuItem); // create menu items
-router.get("/all/:restaurantId", auth, getAllMenuItems);
-router.put("/:itemId", auth, updateMenuItem);
-router.get("/:itemId", auth, getMenuItem);
+// create menu items
+router.post(
+  "/:restaurantId/create",
+  auth,
+  upload.single("image"),
+  createMenuItem
+);
+router.get("/all/:restaurantId", getAllMenuItems);
+router.put("/:itemId", auth, upload.single("image"), updateMenuItem);
+router.get("/:itemId", getMenuItem);
 router.delete("/:itemId", auth, deleteMenuItem);
 const menuRouter = router;
 

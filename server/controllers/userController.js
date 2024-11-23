@@ -2,6 +2,7 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/token");
 const { findById } = require("../models/menuItem");
+const cloudinaryInstance = require("../config/cloudinary");
 const userSignup = async (req, res, next) => {
   try {
     const { name, email, password, mobile, profilePic, role } = req.body;
@@ -128,16 +129,17 @@ const userUpdateprofile = async (req, res, next) => {
   try {
     const { name, email, mobile, profilePic } = req.body;
     const userId = req.user.id;
-    if (!name && !email && !mobile && !profilePic) {
-      return res
-        .status(400)
-        .json({ message: "At least one field must be provided to update" });
-    }
+    // if (!name && !email && !mobile && !profilePic) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "At least one field must be provided to update" });
+    // }
+    const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
     const updateProfile = await User.findByIdAndUpdate(userId, {
       name,
       email,
       mobile,
-      profilePic,
+      profilePic: imageUri.url,
     }).select("-password");
     if (!updateProfile) {
       return res.status(404).json({ message: "User is not found" });

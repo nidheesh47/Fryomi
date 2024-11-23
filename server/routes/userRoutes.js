@@ -12,15 +12,20 @@ const {
 
 const authenticateToken = require("../middleware/auth");
 const userAuth = require("../middleware/auth");
+const upload = require("../middleware/multer");
 const router = express.Router();
-
 router.post("/signup", userSignup);
 router.get("/check-user", checkUser);
 router.post("/login", userLogin);
 router.put("/change-password", userAuth, changePassword);
 router.post("/logout", userAuth, userLogout);
 router.get("/profile/:userId", userAuth, userProfile);
-router.put("/profile/:userId", userAuth, userUpdateprofile);
+router.put(
+  "/profile/:userId/update",
+  userAuth,
+  upload.single("image"),
+  userUpdateprofile
+);
 router.delete("/:userId", userAuth, deleteUser);
 
 const userRouter = router;

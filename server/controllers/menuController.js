@@ -1,14 +1,22 @@
+const cloudinaryInstance = require("../config/cloudinary");
 const MenuItem = require("../models/menuItem"); // Corrected model import
 const Restaurant = require("../models/restaurant");
-const { populate } = require("../models/user");
+const User = require("../models/user");
 
 const createMenuItem = async (req, res, next) => {
   try {
     const { restaurantId } = req.params;
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    const role = req.user.role;
+    if (!user || role !== "admin") {
+      return res.status(401).json({ message: "Unauthorized user" });
+    }
     const { title, image, price, description, restaurant } = req.body;
     if (!title || !price) {
       return res.status(400).json({ message: "Title and price are required" });
     }
+    const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
     const menuItemIsExist = await MenuItem.findOne({
       restaurant: restaurantId,
       title: title,
@@ -19,13 +27,13 @@ const createMenuItem = async (req, res, next) => {
 
     const newMenuItem = new MenuItem({
       title,
-      image,
+      image: imageUri.url,
       price,
       description,
       restaurant: restaurantId,
     });
 
-    // Save the MenuItem to the database
+    //Save the MenuItem to the database
     const savedMenuItem = await newMenuItem.save();
 
     // Send a success response with the created menu item
@@ -42,13 +50,20 @@ const createMenuItem = async (req, res, next) => {
 const updateMenuItem = async (req, res, next) => {
   try {
     const { itemId } = req.params;
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    const role = req.user.role;
+    if (!user || role !== "admin") {
+      return res.status(401).json({ message: "Unauthorized user" });
+    }
     const { title, image, price, description } = req.body;
     if (!itemId) {
       return res.status(400).json({ message: "itemId is required" });
     }
+    const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
     const updateItem = await MenuItem.findByIdAndUpdate(itemId, {
       title,
-      image,
+      image: imageUri.url,
       price,
       description,
     });
@@ -67,6 +82,12 @@ const updateMenuItem = async (req, res, next) => {
 
 const deleteMenuItem = async (req, res, next) => {
   try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    const role = req.user.role;
+    if (!user || role !== "admin") {
+      return res.status(401).json({ message: "Unauthorized user" });
+    }
     const { itemId } = req.params;
     if (!itemId) {
       return res.status(400).json({ message: "Item id is required" });

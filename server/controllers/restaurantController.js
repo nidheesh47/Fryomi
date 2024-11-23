@@ -1,16 +1,18 @@
+const cloudinaryInstance = require("../config/cloudinary");
 const Restaurant = require("../models/restaurant");
 const User = require("../models/user");
 const { param } = require("../routes/userRoutes");
 
 const createRestaurant = async (req, res, next) => {
   try {
-    const { name, location, phone, cuisine } = req.body;
+    const { name, location, phone, image, cuisine } = req.body;
     const userId = req.user.id;
     const user = await User.findById(userId);
     const role = req.user.role;
     if (!user || role !== "admin") {
       return res.status(401).json({ message: "Unauthorized user" });
     }
+    const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
     const restauarntExist = await Restaurant.findOne({ name: name });
     if (restauarntExist) {
       return res.status(400).json({ message: "Restaurant all ready existed" });
@@ -19,6 +21,7 @@ const createRestaurant = async (req, res, next) => {
       name,
       location,
       phone,
+      image: imageUri.url,
       cuisine,
       user: userId,
     });
@@ -36,17 +39,19 @@ const createRestaurant = async (req, res, next) => {
 const updateRestaurant = async (req, res, next) => {
   try {
     const { restaurantId } = req.params;
-    const { name, location, phone, cuisine, menu } = req.body;
+    const { name, location, phone, image, cuisine, menu } = req.body;
     const userId = req.user.id;
     const user = await User.findById(userId);
     const role = req.user.role;
     if (!user || role !== "admin") {
       return res.status(401).json({ message: "Unauthorized user" });
     }
+    const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
     const update = await Restaurant.findByIdAndUpdate(restaurantId, {
       name,
       location,
       phone,
+      image: imageUri.url,
       cuisine,
       menu,
     });
