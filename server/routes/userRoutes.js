@@ -23,7 +23,7 @@ router.get("/profile/:userId", userAuth, userProfile);
 router.put(
   "/profile/:userId/update",
   userAuth,
-  upload.single("image"),
+  upload.single("profilePic"),
   userUpdateprofile
 );
 router.delete("/:userId", userAuth, deleteUser);

@@ -9,6 +9,7 @@ const userSignup = async (req, res, next) => {
     if (!name || !email || !password || !mobile) {
       return res.status(400).json({ message: "All fields required" });
     }
+    const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
     const userExist = await User.findOne({ email: email });
     if (userExist) {
       return res.status(400).json({ message: "User all ready existed" });
@@ -21,7 +22,7 @@ const userSignup = async (req, res, next) => {
       email,
       mobile,
       password: hashedPassword,
-      profilePic,
+      profilePic: imageUri.url,
       role: role ? role : "user",
     });
 
@@ -129,11 +130,6 @@ const userUpdateprofile = async (req, res, next) => {
   try {
     const { name, email, mobile, profilePic } = req.body;
     const userId = req.user.id;
-    // if (!name && !email && !mobile && !profilePic) {
-    //   return res
-    //     .status(400)
-    //     .json({ message: "At least one field must be provided to update" });
-    // }
     const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
     const updateProfile = await User.findByIdAndUpdate(userId, {
       name,
