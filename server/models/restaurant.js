@@ -18,13 +18,7 @@ const restaurantSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    default:
-      "https://cdn1.iconfinder.com/data/icons/hotel-restaurant/512/16-512.png",
   },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  menu: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "MenuItems", required: true },
-  ],
   cuisine: [
     {
       title: {

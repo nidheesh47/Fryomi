@@ -14,9 +14,9 @@ const menuItemSchema = new mongoose.Schema({
   description: {
     type: String,
   },
-  restaurant: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "Restaurant", required: true },
-  ],
+  restaurant: {
+    type: String,
+  },
 });
 
 const MenuItems = mongoose.model("MenuItems", menuItemSchema);

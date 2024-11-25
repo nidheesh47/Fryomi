@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.post("/add"); // add to cart
 
-router.get("/cartId"); // get cart by id
+router.get("/cartId/all"); // get cart by id
 
 router.put("/cardId"); // edit cart by id
 

@@ -3,7 +3,7 @@ const MenuItem = require("../models/menuItem"); // Corrected model import
 const Restaurant = require("../models/restaurant");
 const User = require("../models/user");
 
-const createMenuItem = async (req, res, next) => {
+const createMenuItem = async (req, res) => {
   try {
     const { restaurantId } = req.params;
     const userId = req.user.id;
@@ -12,9 +12,12 @@ const createMenuItem = async (req, res, next) => {
     if (!user || role !== "admin") {
       return res.status(401).json({ message: "Unauthorized user" });
     }
-    const { title, image, price, description, restaurant } = req.body;
+    const { title, price, description } = req.body;
     if (!title || !price) {
       return res.status(400).json({ message: "Title and price are required" });
+    }
+    if (!req.file) {
+      return res.status(400).json({ message: "No image file uploaded" });
     }
     const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
     const menuItemIsExist = await MenuItem.findOne({
@@ -47,7 +50,7 @@ const createMenuItem = async (req, res, next) => {
   }
 };
 
-const updateMenuItem = async (req, res, next) => {
+const updateMenuItem = async (req, res) => {
   try {
     const { itemId } = req.params;
     const userId = req.user.id;
@@ -56,23 +59,25 @@ const updateMenuItem = async (req, res, next) => {
     if (!user || role !== "admin") {
       return res.status(401).json({ message: "Unauthorized user" });
     }
-    const { title, image, price, description } = req.body;
+    const { title, price, description } = req.body;
     if (!itemId) {
       return res.status(400).json({ message: "itemId is required" });
     }
-    const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
-    const updateItem = await MenuItem.findByIdAndUpdate(itemId, {
-      title,
-      image: imageUri.url,
-      price,
-      description,
-    });
-    if (!updateItem) {
+    const menuItem = await MenuItem.findById(itemId);
+    if (!menuItem) {
       return res.status(404).json({ message: "Menu item not found" });
     }
+    if (title) menuItem.title = title;
+    if (price) menuItem.price = price;
+    if (description) menuItem.description = description;
+    if (req.file) {
+      const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
+      menuItem.image = imageUri.url;
+    }
+    const updatedMenuItem = await menuItem.save();
     res.status(200).json({
       message: "Menu item updated successfully",
-      updateItem,
+      updatedMenuItem,
     });
   } catch (error) {
     console.error("Error updating menu item:", error);
@@ -80,7 +85,7 @@ const updateMenuItem = async (req, res, next) => {
   }
 };
 
-const deleteMenuItem = async (req, res, next) => {
+const deleteMenuItem = async (req, res) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId);
@@ -105,7 +110,7 @@ const deleteMenuItem = async (req, res, next) => {
   }
 };
 
-const getAllMenuItems = async (req, res, next) => {
+const getAllMenuItems = async (req, res) => {
   try {
     const { restaurantId } = req.params;
     const menuItems = await MenuItem.find({ restaurant: restaurantId });
@@ -124,15 +129,13 @@ const getAllMenuItems = async (req, res, next) => {
   }
 };
 
-const getMenuItem = async (req, res, next) => {
+const getMenuItem = async (req, res) => {
   try {
     const { itemId } = req.params;
     if (!itemId) {
       return res.status(400).json({ message: "Item Id is required" });
     }
-    const getMenuItemById = await MenuItem.findById(itemId).populate(
-      "restaurant"
-    );
+    const getMenuItemById = await MenuItem.findById(itemId);
     if (!getMenuItemById) {
       return res.status(404).json({ message: "No menu item found" });
     }

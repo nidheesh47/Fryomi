@@ -5,12 +5,15 @@ const { param } = require("../routes/userRoutes");
 
 const createRestaurant = async (req, res, next) => {
   try {
-    const { name, location, phone, image, cuisine } = req.body;
+    const { name, location, phone, cuisine } = req.body;
     const userId = req.user.id;
     const user = await User.findById(userId);
     const role = req.user.role;
     if (!user || role !== "admin") {
       return res.status(401).json({ message: "Unauthorized user" });
+    }
+    if (!req.file) {
+      return res.status(400).json({ message: "No image file uploaded" });
     }
     const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
     const restauarntExist = await Restaurant.findOne({ name: name });
@@ -36,38 +39,40 @@ const createRestaurant = async (req, res, next) => {
   }
 };
 
-const updateRestaurant = async (req, res, next) => {
+const updateRestaurant = async (req, res) => {
   try {
     const { restaurantId } = req.params;
-    const { name, location, phone, image, cuisine, menu } = req.body;
+    const { name, location, phone, cuisine } = req.body;
     const userId = req.user.id;
     const user = await User.findById(userId);
     const role = req.user.role;
     if (!user || role !== "admin") {
       return res.status(401).json({ message: "Unauthorized user" });
     }
-    const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
-    const update = await Restaurant.findByIdAndUpdate(restaurantId, {
-      name,
-      location,
-      phone,
-      image: imageUri.url,
-      cuisine,
-      menu,
-    });
-    if (!update) {
+
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
       return res.status(404).json({ message: "Restauarnt not found" });
     }
+    if (name) restaurant.name = name;
+    if (location) restaurant.name = location;
+    if (phone) restaurant.name = phone;
+    if (cuisine) restaurant.name = cuisine;
+    if (req.file) {
+      const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
+      restaurant.image = imageUri.url;
+    }
+    const updatedRestaurant = await restaurant.save();
     res
       .status(200)
-      .json({ message: "Restaurant updated successfully", update });
+      .json({ message: "Restaurant updated successfully", updatedRestaurant });
   } catch (error) {
     console.error("error updating restaurant", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-const getAllRestaurants = async (req, res, next) => {
+const getAllRestaurants = async (req, res) => {
   try {
     const allRestaurants = await Restaurant.find();
     if (!allRestaurants || allRestaurants.length === 0) {
@@ -82,13 +87,13 @@ const getAllRestaurants = async (req, res, next) => {
   }
 };
 
-const getRestaurant = async (req, res, next) => {
+const getRestaurant = async (req, res) => {
   try {
     const { restaurantId } = req.params;
     if (!restaurantId) {
       return res.status(400).json({ message: "restaurant id is required" });
     }
-    const restaurant = await Restaurant.findById(restaurantId).populate("menu");
+    const restaurant = await Restaurant.findById(restaurantId);
     if (!restaurant) {
       return res.status(404).json({ message: "restaurant is not found" });
     }
@@ -101,7 +106,7 @@ const getRestaurant = async (req, res, next) => {
   }
 };
 
-const deleteRestaurant = async (req, res, next) => {
+const deleteRestaurant = async (req, res) => {
   try {
     const { restaurantId } = req.params;
     const userId = req.user.id;

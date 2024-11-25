@@ -5,11 +5,10 @@ const { findById } = require("../models/menuItem");
 const cloudinaryInstance = require("../config/cloudinary");
 const userSignup = async (req, res, next) => {
   try {
-    const { name, email, password, mobile, profilePic, role } = req.body;
+    const { name, email, password, mobile, role } = req.body;
     if (!name || !email || !password || !mobile) {
       return res.status(400).json({ message: "All fields required" });
     }
-    const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
     const userExist = await User.findOne({ email: email });
     if (userExist) {
       return res.status(400).json({ message: "User all ready existed" });
@@ -126,23 +125,26 @@ const userProfile = async (req, res, next) => {
   }
 };
 
-const userUpdateprofile = async (req, res, next) => {
+const userUpdateprofile = async (req, res) => {
   try {
-    const { name, email, mobile, profilePic } = req.body;
+    const { name, email, mobile } = req.body;
     const userId = req.user.id;
-    const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
-    const updateProfile = await User.findByIdAndUpdate(userId, {
-      name,
-      email,
-      mobile,
-      profilePic: imageUri.url,
-    }).select("-password");
-    if (!updateProfile) {
+
+    const profile = await User.findById(userId).select("-password");
+    if (!profile) {
       return res.status(404).json({ message: "User is not found" });
     }
+    if (name) profile.name = name;
+    if (email) profile.email = email;
+    if (mobile) profile.mobile = mobile;
+    if (req.file) {
+      const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
+      profile.profilePic = imageUri.url;
+    }
+    const profileupdated = await profile.save();
     res.status(200).json({
       message: "User profile updated successfully",
-      updateProfile,
+      profileupdated,
     });
   } catch (error) {
     console.error("error updating profile", error);
@@ -150,7 +152,7 @@ const userUpdateprofile = async (req, res, next) => {
   }
 };
 
-const userLogout = async (req, res, next) => {
+const userLogout = async (req, res) => {
   try {
     res.clearCookie("token");
     res.status(201).json({ message: "user logout" });
@@ -161,7 +163,7 @@ const userLogout = async (req, res, next) => {
   }
 };
 
-const deleteUser = async (req, res, next) => {
+const deleteUser = async (req, res) => {
   try {
     const userId = req.user.id;
     const removeUser = await User.findByIdAndDelete(userId);
@@ -174,7 +176,7 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-const checkUser = async (req, res, next) => {
+const checkUser = async (req, res) => {
   try {
     const { userEmail } = req.query;
     const userExist = await User.findOne({ email: userEmail });
