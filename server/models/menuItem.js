@@ -1,23 +1,23 @@
 const mongoose = require("mongoose");
-const Restaurant = require("./restaurant");
+
 const menuItemSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    required: [true, "Title is required"], // If title is used instead of name
   },
-  image: {
-    type: String,
-  },
+  description: String,
   price: {
     type: Number,
+    required: [true, "Price is required"],
   },
-  description: {
-    type: String,
-  },
+  image: String,
   restaurant: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Restaurant",
+    required: true,
   },
 });
 
-const MenuItems = mongoose.model("MenuItems", menuItemSchema);
-module.exports = MenuItems;
+const MenuItem = mongoose.model("MenuItem", menuItemSchema);
+
+module.exports = MenuItem;

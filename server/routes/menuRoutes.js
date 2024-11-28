@@ -5,6 +5,7 @@ const {
   deleteMenuItem,
   getAllMenuItems,
   getMenuItem,
+  getMenuByName,
 } = require("../controllers/menuController");
 const auth = require("../middleware/auth");
 const upload = require("../middleware/multer");
@@ -22,6 +23,7 @@ router.get("/all/:restaurantId", getAllMenuItems);
 router.put("/:itemId", auth, upload.single("image"), updateMenuItem);
 router.get("/:itemId", getMenuItem);
 router.delete("/:itemId", auth, deleteMenuItem);
+router.get("/name/:title", getMenuByName);
 const menuRouter = router;
 
 module.exports = menuRouter;

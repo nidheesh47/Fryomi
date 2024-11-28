@@ -19,20 +19,11 @@ const cartSchema = new mongoose.Schema(
           ref: "MenuItems",
           required: true,
         },
-        name: {
-          type: String,
-          required: true,
-        },
         quantity: {
           type: Number,
           required: true,
           min: 1,
           default: 1,
-        },
-        price: {
-          type: Number,
-          required: true,
-          min: 0,
         },
         totalItemPrice: {
           type: Number,
@@ -47,17 +38,8 @@ const cartSchema = new mongoose.Schema(
       min: 0,
       default: 0,
     },
-    discount: {
-      type: Number,
-    },
-    finalPrice: {
-      type: Number,
-      required: true,
-      min: 0,
-      default: 0,
-    },
   },
-  { timestamps }
+  { timestamps: true }
 );
 
 const Cart = mongoose.model("Cart", cartSchema);

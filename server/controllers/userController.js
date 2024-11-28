@@ -21,7 +21,6 @@ const userSignup = async (req, res, next) => {
       email,
       mobile,
       password: hashedPassword,
-      profilePic: imageUri.url,
       role: role ? role : "user",
     });
 

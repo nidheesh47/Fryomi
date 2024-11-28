@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
 const addressSchema = new mongoose.Schema({
+  housename: {
+    type: String,
+    required: true,
+    trim: true,
+  },
   street: {
     type: String,
     required: true,
@@ -15,12 +20,13 @@ const addressSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  postalCode: {
+  pincode: {
     type: String,
     required: true,
     trim: true,
     match: /^[1-9][0-9]{5}$/,
   },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 });
 
 const Address = mongoose.model("Address", addressSchema);

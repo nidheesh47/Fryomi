@@ -12,20 +12,24 @@ const createMenuItem = async (req, res) => {
     if (!user || role !== "admin") {
       return res.status(401).json({ message: "Unauthorized user" });
     }
+
     const { title, price, description } = req.body;
+
     if (!title || !price) {
       return res.status(400).json({ message: "Title and price are required" });
     }
     if (!req.file) {
       return res.status(400).json({ message: "No image file uploaded" });
     }
+
     const imageUri = await cloudinaryInstance.uploader.upload(req.file.path);
+
     const menuItemIsExist = await MenuItem.findOne({
       restaurant: restaurantId,
       title: title,
     });
     if (menuItemIsExist) {
-      return res.status(400).json({ message: "Menu item is alread exist" });
+      return res.status(400).json({ message: "Menu item already exists" });
     }
 
     const newMenuItem = new MenuItem({
@@ -36,17 +40,21 @@ const createMenuItem = async (req, res) => {
       restaurant: restaurantId,
     });
 
-    //Save the MenuItem to the database
     const savedMenuItem = await newMenuItem.save();
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
 
-    // Send a success response with the created menu item
+    restaurant.menu.push(savedMenuItem._id);
+    await restaurant.save();
+
     res.status(201).json({
-      message: "Menu Item Created Successfully",
+      message: "Menu Item Created and Added to Restaurant Successfully",
       savedMenuItem,
     });
   } catch (error) {
-    console.error("Error:", error); // Log the error for better debugging
-    res.status(500).json({ message: "Internal Server Error" }); // Ensure correct error response
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -135,7 +143,9 @@ const getMenuItem = async (req, res) => {
     if (!itemId) {
       return res.status(400).json({ message: "Item Id is required" });
     }
-    const getMenuItemById = await MenuItem.findById(itemId);
+    const getMenuItemById = await MenuItem.findById(itemId).populate(
+      "restaurant"
+    );
     if (!getMenuItemById) {
       return res.status(404).json({ message: "No menu item found" });
     }
@@ -150,6 +160,24 @@ const getMenuItem = async (req, res) => {
     });
   }
 };
+const getMenuByName = async (req, res) => {
+  try {
+    const { title } = req.params;
+    const menu = await MenuItem.find({
+      title: { $regex: title, $options: "i" },
+    }).populate("restaurant");
+    if (menu.length === 0) {
+      return res.status(404).json({ message: "No menu items found" });
+    }
+    res.status(200).json({
+      message: "Menu item found successfully",
+      menu,
+    });
+  } catch (error) {
+    console.error("Error fetching menu items:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 module.exports = {
   createMenuItem,
@@ -157,4 +185,5 @@ module.exports = {
   deleteMenuItem,
   getAllMenuItems,
   getMenuItem,
+  getMenuByName,
 };
