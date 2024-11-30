@@ -13,7 +13,7 @@ const createMenuItem = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized user" });
     }
 
-    const { title, price, description } = req.body;
+    const { title, price, description, review } = req.body;
 
     if (!title || !price) {
       return res.status(400).json({ message: "Title and price are required" });
@@ -38,6 +38,7 @@ const createMenuItem = async (req, res) => {
       price,
       description,
       restaurant: restaurantId,
+      review,
     });
 
     const savedMenuItem = await newMenuItem.save();
@@ -89,7 +90,7 @@ const updateMenuItem = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating menu item:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -113,7 +114,7 @@ const deleteMenuItem = async (req, res) => {
   } catch (error) {
     {
       console.error("Error deleting menu item:", error);
-      res.status(500).json({ message: "Internal Server Error" });
+      res.status(500).json({ message: error.message });
     }
   }
 };
@@ -132,7 +133,7 @@ const getAllMenuItems = async (req, res) => {
   } catch (error) {
     console.error("error fetching menu items", error);
     res.status(500).json({
-      message: "Internal server error",
+      message: error.message,
     });
   }
 };
@@ -143,9 +144,10 @@ const getMenuItem = async (req, res) => {
     if (!itemId) {
       return res.status(400).json({ message: "Item Id is required" });
     }
-    const getMenuItemById = await MenuItem.findById(itemId).populate(
-      "restaurant"
-    );
+    const getMenuItemById = await MenuItem.findById(itemId).populate([
+      { path: "restaurant", select: "name" },
+      { path: "review" },
+    ]);
     if (!getMenuItemById) {
       return res.status(404).json({ message: "No menu item found" });
     }
@@ -156,7 +158,7 @@ const getMenuItem = async (req, res) => {
   } catch (error) {
     console.error("error fetching menu item", error);
     res.status(500).json({
-      message: "Internal server error",
+      message: error.message,
     });
   }
 };
@@ -165,7 +167,7 @@ const getMenuByName = async (req, res) => {
     const { title } = req.params;
     const menu = await MenuItem.find({
       title: { $regex: title, $options: "i" },
-    }).populate("restaurant");
+    }).populate([{ path: "restaurant", select: "name" }, { path: "review" }]);
     if (menu.length === 0) {
       return res.status(404).json({ message: "No menu items found" });
     }
@@ -175,7 +177,7 @@ const getMenuByName = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching menu items:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: error.message });
   }
 };
 

@@ -62,9 +62,13 @@ const addToCart = async (req, res) => {
     }
 
     await cart.save();
-    res.status(200).json(cart);
+    const populatedCart = await Cart.findById(cart._id)
+      .populate("userId", "name") // Populate user details (name)
+      .populate("items.foodId", "title price") // Populate food details like name and price
+      .populate("restaurantId", "name location");
+    res.status(200).json({ cart: populatedCart });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", error });
+    res.status(500).json({ message: error.message });
   }
 };
 

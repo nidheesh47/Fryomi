@@ -29,8 +29,15 @@ const couponSchema = new mongoose.Schema(
       default: true,
     },
   },
-  { timestamps }
+  { timestamps: true }
 );
+// Check expiration before saving
+couponSchema.pre("save", function (next) {
+  if (this.expirationDate < new Date()) {
+    this.isActive = false; // Set the coupon as inactive if expired
+  }
+  next();
+});
 
 const Coupon = mongoose.model("Coupon", couponSchema);
 

@@ -2,14 +2,19 @@ const mongoose = require("mongoose");
 
 const reviewSchema = new mongoose.Schema(
   {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+    restaurantId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Restaurant",
       required: true,
     },
     menuId: {
-      type: Schema.Types.ObjectId,
-      ref: "MenuItems",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "MenuItem",
+      required: true,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     rating: {
@@ -20,11 +25,12 @@ const reviewSchema = new mongoose.Schema(
     },
     comment: {
       type: String,
-      trim: true,
-      maxlength: 500,
+      required: false,
     },
   },
   { timestamps: true }
 );
+
 const Review = mongoose.model("Review", reviewSchema);
+
 module.exports = Review;

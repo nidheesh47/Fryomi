@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Review = require("./review");
 
 const menuItemSchema = new mongoose.Schema({
   title: {
@@ -15,6 +16,17 @@ const menuItemSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Restaurant",
     required: true,
+  },
+  review: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Review",
+    },
+  ],
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5,
   },
 });
 
