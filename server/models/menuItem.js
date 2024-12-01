@@ -23,11 +23,7 @@ const menuItemSchema = new mongoose.Schema({
       ref: "Review",
     },
   ],
-  rating: {
-    type: Number,
-    min: 1,
-    max: 5,
-  },
+  rating: { type: Number, default: 0 },
 });
 
 const MenuItem = mongoose.model("MenuItem", menuItemSchema);

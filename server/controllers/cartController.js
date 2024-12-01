@@ -157,7 +157,7 @@ const removeCart = async (req, res) => {
     const userId = req.user.id;
     const user = await User.findById(userId);
     const role = req.user.role;
-    if (!user || role !== "admin") {
+    if (!user || role !== "user") {
       return res.status(401).json({ message: "Unauthorized user" });
     }
     const cart = await Cart.findOneAndDelete({ userId });

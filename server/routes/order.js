@@ -8,7 +8,7 @@ const router = express.Router();
 
 const Auth = require("../middleware/auth");
 router.post("/create", Auth, createOrder);
-router.put("/update", Auth, updateStatus);
+router.put("/status", Auth, updateStatus);
 router.delete("/:orderId", Auth, deleteOrder);
 const OrderRouter = router;
 

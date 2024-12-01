@@ -13,7 +13,7 @@ const createMenuItem = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized user" });
     }
 
-    const { title, price, description, review } = req.body;
+    const { title, price, description, review, rating } = req.body;
 
     if (!title || !price) {
       return res.status(400).json({ message: "Title and price are required" });
@@ -39,6 +39,7 @@ const createMenuItem = async (req, res) => {
       description,
       restaurant: restaurantId,
       review,
+      rating: 0,
     });
 
     const savedMenuItem = await newMenuItem.save();

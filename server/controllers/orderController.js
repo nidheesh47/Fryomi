@@ -7,8 +7,12 @@ const { applyCoupon } = require("./couponController");
 const createOrder = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { cartId, deliveryAddressId, couponCodeId, restaurantId, status } =
-      req.body;
+    const { cartId, deliveryAddressId, couponCodeId, status } = req.body;
+    const user = await User.findById(userId);
+    const role = req.role;
+    if (!user || role === "user") {
+      return res.status(400).json({ message: "User is not Authorized" });
+    }
 
     const cart = await Cart.findById(cartId);
     if (!cart) {
@@ -39,7 +43,7 @@ const createOrder = async (req, res) => {
     }
     const order = new Order({
       userId,
-      restaurantId,
+
       cartId,
       couponCodeId,
       deliveryAddressId,
@@ -57,15 +61,15 @@ const createOrder = async (req, res) => {
 
 const updateStatus = async (req, res) => {
   try {
-    const { status, orderId } = req.body;
     const userId = req.user.id;
     const user = await User.findById(userId);
     const role = req.role;
     if (!user || role === "admin") {
       return res.status(400).json({ message: "User is not Authorized" });
     }
+    const { status, orderId } = req.body;
     const order = await Order.findById(orderId);
-    console.log(order);
+
     if (!order) {
       return res.status(404).json({ message: "No order found" });
     }
@@ -107,6 +111,11 @@ const updateStatus = async (req, res) => {
 
 const deleteOrder = async (req, res) => {
   try {
+    const user = await User.findById(userId);
+    const role = req.role;
+    if (!user || role === "user") {
+      return res.status(400).json({ message: "User is not Authorized" });
+    }
     const { orderId } = req.params;
     const order = await Order.findByIdAndDelete(orderId);
     if (!order) {

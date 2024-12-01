@@ -1,74 +1,114 @@
-// const MenuItem = require("../models/menuItem");
-// const Review = require("../models/review");
+const MenuItem = require("../models/menuItem");
+const Review = require("../models/review");
+const Order = require("../models/order");
+const User = require("../models/user");
+const addReview = async (req, res) => {
+  try {
+    const { foodId, rating, comment, orderId } = req.body;
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    const role = req.role;
+    if (!user || role === "user") {
+      return res.status(400).json({ message: "User is not Authorized" });
+    }
 
-// const addReview = async (req, res) => {
-//   try {
-//     const { menuId, rating, comment } = req.body;
-//     const userId = req.user.id;
-//     const menu = await MenuItem.findById(menuId);
-//     if (!menu) {
-//       return res.status(400).json({ message: "Menu not found" });
-//     }
-//     if (rating > 5 || rating < 1) {
-//       return res
-//         .status(400)
-//         .json({ message: "Please provide a proper rating" });
-//     }
+    if (!foodId) {
+      return res.status(400).json({ message: "Food ID is required" });
+    }
 
-//     const review = await Review.findOneAndUpdate(
-//       { userId, menuId },
-//       { rating, comment },
-//       { new: true, upsert: true }
-//     );
-//     res.status(201).json({ message: "Review created successfully", review });
-//     const reviewId = await Review.findById(review._id);
+    const order = await Order.findOne({
+      _id: orderId,
+      status: "delivered",
+    }).populate({
+      path: "cartId",
+      populate: {
+        path: "items.foodId",
+      },
+    });
 
-//     if (!menu.review.includes(review._id)) {
-//       menu.review.push(review._id);
-//     }
-//     await menu.save();
-//     await menu.populate("review");
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    if (!order) {
+      return res.status(400).json({ message: "No completed order found." });
+    }
 
-// const getMenuReviews = async (req, res) => {
-//   try {
-//     const { menuId } = req.params;
-//     const review = await Review.find({ menuId })
-//       .populate("userId", "name")
-//       .sort({ createdAt: -1 });
-//     if (!review.length) {
-//       return res
-//         .status(400)
-//         .json({ message: "No review is found for this menu" });
-//     }
-//     res.status(200).json({ message: "Review found", review });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    const purchasedItem = order.cartId.items.find((item) => {
+      if (item.foodId && item.foodId._id) {
+        return item.foodId._id.toString() === foodId.toString();
+      }
+      return false;
+    });
 
-// const getAvergeRating = async (req, res) => {
-//   try {
-//     const { menuId } = req.params;
-//     const review = await Review.find({ menuId });
-//     if (!review) {
-//       return res
-//         .status(400)
-//         .json({ message: "No review is found for this menu" });
-//     }
-//     const rating =
-//       review.reduce((sum, review) => sum + review.rating, 0) / review.length;
-//     return res.status(200).json({ rating });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+    if (!purchasedItem) {
+      return res
+        .status(400)
+        .json({ message: "You have not purchased this menu item" });
+    }
 
-// module.exports = {
-//   addReview,
-//   getMenuReviews,
-//   getAvergeRating,
-// };
+    if (rating > 5 || rating < 1) {
+      return res
+        .status(400)
+        .json({ message: "Please provide a proper rating" });
+    }
+
+    const existingReview = await Review.findOne({
+      userId: userId,
+      menuId: foodId,
+      orderId: orderId,
+    });
+    if (existingReview) {
+      return res.status(400).json({ message: "Review Already Exist" });
+    }
+    // Create the review
+    const review = new Review({
+      userId,
+      menuId: foodId,
+      orderId: order._id,
+      rating,
+      comment,
+    });
+
+    await review.save();
+
+    // Update the menu with the new review
+    const menu = await MenuItem.findById(foodId);
+    if (!menu) {
+      return res.status(400).json({ message: "Menu item not found" });
+    }
+
+    menu.review.push(review._id);
+    menu.rating = await averageRating(foodId);
+    await menu.save();
+
+    res.status(201).json({ message: "Review added successfully.", review });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getMenuReviews = async (req, res) => {
+  try {
+    const { menuId } = req.params;
+    const review = await Review.find({ menuId })
+      .populate("userId", "name")
+      .sort({ createdAt: -1 });
+    if (!review.length) {
+      return res
+        .status(400)
+        .json({ message: "No review is found for this menu" });
+    }
+    res.status(200).json({ message: "Review found", review });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const averageRating = async (menuId) => {
+  const reviews = await Review.find({ menuId });
+  if (reviews.length === 0) return 0;
+  const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+  return totalRating / reviews.length;
+};
+
+module.exports = {
+  addReview,
+  getMenuReviews,
+};
