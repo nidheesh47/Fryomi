@@ -3,7 +3,7 @@ import RestaurantCard from "./RestaurantCard";
 
 const data = [
   {
-    name: "RohinMess",
+    name: "PizzaHut",
     image: "/pizza",
     rating: 4,
   },
@@ -13,7 +13,7 @@ const data = [
     rating: 4,
   },
   {
-    name: "Paalazhi",
+    name: "Domino's",
     image: "/pizza",
     rating: 4,
   },

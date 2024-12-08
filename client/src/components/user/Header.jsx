@@ -8,7 +8,7 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-
+import { Link } from "react-router-dom";
 const navigation = [];
 
 function classNames(...classes) {
@@ -22,9 +22,11 @@ export default function Header() {
         <div className="relative flex h-16 items-center justify-between">
           {/* Logo Section */}
           <div className="flex-shrink-0">
-            <h1 className="roboto-medium font-bold text-white text-3xl sm:text-5xl">
-              Fryomi
-            </h1>
+            <Link>
+              <h1 className="roboto-medium font-bold text-white text-3xl sm:text-5xl">
+                Fryomi
+              </h1>
+            </Link>
           </div>
 
           {/* Desktop Menu */}

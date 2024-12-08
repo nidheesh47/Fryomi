@@ -10,6 +10,7 @@ import AboutPage from "../components/shared/AboutPage";
 import SignUpPage from "../components/shared/SignUpPage";
 import LoginPage from "../components/shared/LoginPage";
 import AllRestaurantsPage from "../components/restaurant/AllRestaurantsPage";
+import ProfilePage from "../components/user/ProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <LoginPage />,
+      },
+      {
+        path: "/profile",
+        element: <ProfilePage />,
       },
     ],
   },

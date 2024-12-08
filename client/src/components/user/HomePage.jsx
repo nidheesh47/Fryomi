@@ -5,7 +5,33 @@ import SliderItem from "./SliderItem";
 import MultiSlider from "./MultiSlider";
 
 function HomePage() {
-  const data = [1, 2, 3, 4, 5];
+  const data = [
+    {
+      name: "PizzaHut",
+      image: "/pizza.png",
+      rating: 4,
+    },
+    {
+      name: "Moonlight",
+      image: "/pizza.png",
+      rating: 4,
+    },
+    {
+      name: "Domino's",
+      image: "/pizza.png",
+      rating: 4,
+    },
+    {
+      name: "Rainbow",
+      image: "/pizza.png",
+      rating: 4,
+    },
+    {
+      name: "Salt&pepper",
+      image: "/pizza.png",
+      rating: 4,
+    },
+  ];
   const carouselData = [
     {
       image: "/pizza.png",
@@ -124,8 +150,13 @@ function HomePage() {
       {/* Restaurant Cards */}
       <div className="max-w-screen-xl mx-auto p-5 sm:p-10 md:p-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-          {data.map((item) => (
-            <RestaurantCard key={item} />
+          {data.map((restaurant) => (
+            <RestaurantCard
+              key={restaurant.name} // Use a unique key (like the restaurant name)
+              name={restaurant.name}
+              image={restaurant.image}
+              rating={restaurant.rating}
+            />
           ))}
         </div>
       </div>
