@@ -1,14 +1,39 @@
-// src/Login.jsx
 import React, { useState } from "react";
+import { axiosInstance } from "../../config/axioInstance";
+import { useNavigate } from "react-router-dom"; // Import useNavigate to redirect after login
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate(); // Hook to navigate to another page
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle login logic here
-    console.log("Logging in with", email, password);
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent form from reloading the page
+
+    try {
+      // Send the email and password to the backend for login
+      const response = await axiosInstance.post("/user/login", {
+        email,
+        password,
+      });
+
+      // Log the response to check if the token is returned
+      console.log("Login response:", response);
+
+      // Check if the response contains a token
+      if (response.data && response.data.token) {
+        // Store the token in localStorage (or sessionStorage, depending on your requirements)
+        localStorage.setItem("token", response.data.token);
+
+        // Optionally, redirect to the home page or another protected route
+        navigate("/"); // This redirects to the homepage or another page
+      } else {
+        console.error("Login failed: No token found in response");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Login failed. Please check your credentials and try again.");
+    }
   };
 
   return (

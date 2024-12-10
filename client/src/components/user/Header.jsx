@@ -9,6 +9,7 @@ import {
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
+import LoginPage from "../shared/LoginPage";
 const navigation = [];
 
 function classNames(...classes) {
@@ -31,12 +32,16 @@ export default function Header() {
 
           {/* Desktop Menu */}
           <div className="hidden sm:flex sm:space-x-4">
-            <button className="rounded-md bg-white py-2 px-4 border border-transparent text-center text-sm text-yellow-800 font-medium roboto transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-              Login
-            </button>
-            <button className="rounded-md bg-white py-2 px-4 border border-transparent text-center text-sm text-yellow-800 font-medium roboto transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-              Signup
-            </button>
+            <Link to="/login">
+              <button className="rounded-md bg-white py-2 px-4 border border-transparent text-center text-sm text-yellow-800 font-medium roboto transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+                Login
+              </button>
+            </Link>
+            <Link to="/signup">
+              <button className="rounded-md bg-white py-2 px-4 border border-transparent text-center text-sm text-yellow-800 font-medium roboto transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+                Signup
+              </button>
+            </Link>
           </div>
 
           {/* Mobile Hamburger Menu */}

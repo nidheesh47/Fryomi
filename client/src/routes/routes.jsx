@@ -11,6 +11,7 @@ import SignUpPage from "../components/shared/SignUpPage";
 import LoginPage from "../components/shared/LoginPage";
 import AllRestaurantsPage from "../components/restaurant/AllRestaurantsPage";
 import ProfilePage from "../components/user/ProfilePage";
+import RestaurantPage from "../components/restaurant/RestaurantPage";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,14 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "/restaurant",
+        element: <RestaurantPage />,
+      },
+      {
+        path: "/restaurant/:restaurantId", // Dynamic route parameter for RestaurantPage
+        element: <RestaurantPage />, // Restaurant details page
       },
     ],
   },
