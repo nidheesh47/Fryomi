@@ -23,7 +23,10 @@ const AllRestaurantsPage = () => {
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-semibold text-center mb-8">
+      <h1
+        className="text-3xl font-semibold text-center mb-8"
+        style={{ color: "rgb(0, 0, 0, 0.8)" }}
+      >
         All Restaurants
       </h1>
 
@@ -37,6 +40,7 @@ const AllRestaurantsPage = () => {
               name={restaurant.name}
               image={restaurant.image}
               rating={restaurant.rating}
+              style={{ color: "rgb(0, 0, 0, 0.8)" }} // Apply the same color to the text inside RestaurantCard
             />
           </Link>
         ))}

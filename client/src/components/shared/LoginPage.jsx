@@ -1,45 +1,43 @@
 import React, { useState } from "react";
 import { axiosInstance } from "../../config/axioInstance";
-import { useNavigate } from "react-router-dom"; // Import useNavigate to redirect after login
+import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // Hook to navigate to another page
+  const [error, setError] = useState(""); // State to hold error messages
+  const [loading, setLoading] = useState(false); // State for loading indicator
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent form from reloading the page
+    e.preventDefault();
+    setError(""); // Clear previous errors
+    setLoading(true); // Show loading state
 
     try {
-      // Send the email and password to the backend for login
       const response = await axiosInstance.post("/user/login", {
         email,
         password,
       });
-
-      // Log the response to check if the token is returned
-      console.log("Login response:", response);
-
-      // Check if the response contains a token
-      if (response.data && response.data.token) {
-        // Store the token in localStorage (or sessionStorage, depending on your requirements)
-        localStorage.setItem("token", response.data.token);
-
-        // Optionally, redirect to the home page or another protected route
-        navigate("/"); // This redirects to the homepage or another page
-      } else {
-        console.error("Login failed: No token found in response");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      alert("Login failed. Please check your credentials and try again.");
+      toast.success("Login successful!");
+      navigate("/");
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "An error occurred. Please try again."
+      );
+      toast.error("Login failed. Please check your credentials.");
+      console.error("Login error:", err); // Log error for debugging
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <Toaster /> {/* Add Toaster */}
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-semibold text-center text-yellow-800 mb-6">
+        <h2 className="text-2xl font-semibold text-center text-yellow-900 mb-6">
           Login to Your Account
         </h2>
         <form onSubmit={handleSubmit}>
@@ -57,7 +55,7 @@ const LoginPage = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-900 focus:border-yellow-900"
             />
           </div>
 
@@ -75,22 +73,45 @@ const LoginPage = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-900 focus:border-yellow-900"
             />
           </div>
 
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+
           <button
             type="submit"
-            className="w-full py-2 bg-yellow-800 text-white font-semibold rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            disabled={loading}
+            className={`w-full py-2 font-semibold rounded-lg transition duration-300 ${
+              loading
+                ? "bg-yellow-900 text-gray-800 cursor-not-allowed"
+                : "bg-yellow-900 text-white hover:bg-yellow-900 "
+            } focus:outline-none focus:ring-2 focus:ring-yellow-900`}
           >
-            Login
+            {loading ? (
+              <svg
+                className="animate-spin h-5 w-5 mx-auto"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 5v7l4 4"
+                />
+              </svg>
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
 
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
             Don't have an account?{" "}
-            <a href="/signup" className="text-yellow-800 hover:text-yellow-600">
+            <a href="/signup" className="text-yellow-900">
               Sign up
             </a>
           </p>

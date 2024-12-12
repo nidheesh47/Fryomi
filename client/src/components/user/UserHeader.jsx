@@ -18,12 +18,12 @@ function classNames(...classes) {
 
 export default function UserHeader() {
   return (
-    <Disclosure as="nav" className="bg-yellow-800">
+    <Disclosure as="nav" className="bg-yellow-900">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           {/* Logo */}
           <div>
-            <Link>
+            <Link to="/">
               <h1 className="roboto-medium text-white text-3xl sm:text-4xl md:text-5xl">
                 Fryomi
               </h1>

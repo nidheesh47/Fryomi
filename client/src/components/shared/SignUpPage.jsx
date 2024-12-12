@@ -1,4 +1,3 @@
-// src/SignUp.jsx
 import React, { useState } from "react";
 
 const SignUpPage = () => {
@@ -26,7 +25,7 @@ const SignUpPage = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full sm:w-96 md:w-80 lg:w-96">
-        <h2 className="text-2xl font-semibold text-center text-yellow-800 mb-6">
+        <h2 className="text-2xl font-semibold text-center text-yellow-900 mb-6">
           Create a New Account
         </h2>
 
@@ -45,7 +44,7 @@ const SignUpPage = () => {
               value={userDetails.name}
               onChange={handleChange}
               required
-              className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-900 focus:border-yellow-900"
             />
           </div>
 
@@ -63,7 +62,7 @@ const SignUpPage = () => {
               value={userDetails.email}
               onChange={handleChange}
               required
-              className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-900 focus:border-yellow-900"
             />
           </div>
 
@@ -81,7 +80,7 @@ const SignUpPage = () => {
               value={userDetails.mobile}
               onChange={handleChange}
               required
-              className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-900 focus:border-yellow-900"
             />
           </div>
 
@@ -99,13 +98,13 @@ const SignUpPage = () => {
               value={userDetails.password}
               onChange={handleChange}
               required
-              className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-900 focus:border-yellow-900"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-2 bg-yellow-800 text-white font-semibold rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            className="w-full py-2 bg-yellow-900 text-white font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-900"
           >
             Sign Up
           </button>
@@ -114,7 +113,7 @@ const SignUpPage = () => {
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
             Already have an account?{" "}
-            <a href="/login" className="text-yellow-800 hover:text-yellow-600">
+            <a href="/login" className="text-yellow-900">
               Log in
             </a>
           </p>
