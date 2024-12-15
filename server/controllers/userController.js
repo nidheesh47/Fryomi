@@ -38,7 +38,7 @@ const userSignup = async (req, res, next) => {
   }
 };
 
-const userLogin = async (req, res, next) => {
+const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -67,7 +67,7 @@ const userLogin = async (req, res, next) => {
   }
 };
 
-const changePassword = async (req, res, next) => {
+const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmNewPassword } = req.body;
 
@@ -110,7 +110,7 @@ const changePassword = async (req, res, next) => {
   }
 };
 
-const userProfile = async (req, res, next) => {
+const userProfile = async (req, res) => {
   try {
     const userId = req.user.id;
     const userProfile = await User.findById(userId).select("-password");
