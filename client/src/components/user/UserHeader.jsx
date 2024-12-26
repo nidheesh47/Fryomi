@@ -10,6 +10,7 @@ import {
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { logout } from "../../services/authService";
 import ProfilePage from "./ProfilePage";
 
 function classNames(...classes) {
@@ -66,6 +67,7 @@ export default function UserHeader() {
                 <MenuItem>
                   <a
                     href="#"
+                    onClick={logout}
                     className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                   >
                     Sign out

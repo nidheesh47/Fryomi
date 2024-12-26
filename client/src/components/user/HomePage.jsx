@@ -1,8 +1,8 @@
+import { Carousel } from "@material-tailwind/react";
 import React from "react";
 import RestaurantCard from "../restaurant/RestaurantCard";
-import { Carousel } from "@material-tailwind/react";
-import SliderItem from "./SliderItem";
 import MultiSlider from "./MultiSlider";
+import SliderItem from "./SliderItem";
 
 function HomePage() {
   const data = [

@@ -13,17 +13,17 @@ const userSchema = new mongoose.Schema(
       minLength: 5,
       maxLength: 30,
     },
-    password: {
-      type: String,
-      required: true,
-      minLength: 6,
-    },
     mobile: {
       type: Number,
       required: true,
       unique: true,
       minLength: 10,
       maxLength: 15,
+    },
+    password: {
+      type: String,
+      required: true,
+      minLength: 6,
     },
     profilePic: {
       type: String,
