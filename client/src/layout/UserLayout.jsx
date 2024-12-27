@@ -18,5 +18,3 @@ function UserLayout() {
 }
 
 export default UserLayout;
-
-const userId = req.user.user._id;
